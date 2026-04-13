@@ -25,8 +25,8 @@ volatile float shared_energy = 0.0f;
 portMUX_TYPE energyMux = portMUX_INITIALIZER_UNLOCKED;
 
 // ─── Tuning ─────────────────────────────────────────────
-//  C2       wave propagation speed² — keep under 0.5
-//  DAMPING  energy drain per step — higher = dies faster
+//  C2       wave propagation speed² - keep under 0.5
+//  DAMPING  energy drain per step - higher = dies faster
 //  FORCE    how hard tilt/shake kicks the wave
 const float C2      = 0.05f;
 const float DAMPING = 0.005f;
@@ -51,7 +51,7 @@ inline int heightToBrightness(float v) {
 }
 
 // ══════════════════════════════════════════════════════
-// CORE 1 — Physics task
+// CORE 1 - Physics task
 // ══════════════════════════════════════════════════════
 float prevAx = 0, prevAy = 0;
 float localH[N][N], localVel[N][N];
@@ -82,7 +82,7 @@ void physicsTask(void* param) {
 
     for (int r = 0; r < N; r++) {
       for (int c = 0; c < N; c++) {
-        // Reflective boundary — waves bounce off walls
+        // Reflective boundary - waves bounce off walls
         float up = (r > 0)   ? localH[r-1][c] : localH[r][c];
         float dn = (r < N-1) ? localH[r+1][c] : localH[r][c];
         float lt = (c > 0)   ? localH[r][c-1] : localH[r][c];
@@ -122,7 +122,7 @@ void physicsTask(void* param) {
 }
 
 // ══════════════════════════════════════════════════════
-// CORE 0 — Render + IMU task
+// CORE 0 - Render + IMU task
 // ══════════════════════════════════════════════════════
 void renderTask(void* param) {
   int subFrame = 0;
@@ -136,7 +136,7 @@ void renderTask(void* param) {
       shared_ay = mpu.getAccY();
     portEXIT_CRITICAL(&accelMux);
 
-    // Read energy and map to hardware intensity 0–15
+    // Read energy and map to hardware intensity 0-15
     float energy;
     portENTER_CRITICAL(&energyMux);
       energy = shared_energy;
@@ -167,7 +167,7 @@ void renderTask(void* param) {
       byte row = 0;
       for (int c = 0; c < N; c++)
         if (bright[r][c] > subFrame) row |= (1 << (7 - c));
-      lc.setRow(0, r, row);  // stays the same — MD_MAX72XX supports this
+      lc.setRow(0, r, row);
     }
 
     subFrame = (subFrame + 1) % BCM_LEVELS;
@@ -186,7 +186,7 @@ void setup() {
   byte status = mpu.begin();
   if (status != 0) {
     Serial.println("MPU6050 not found! Check wiring.");
-    while (true);   // halt — nothing will work without the IMU
+    while (true);   // halt - nothing will work without the IMU
   }
 
   Serial.println("Hold still — calibrating MPU6050 (1 sec)...");
@@ -200,11 +200,11 @@ void setup() {
   lc.clear();
 
   // Launch tasks on separate cores
-  // renderTask gets priority 2 so BCM timing stays tight
+  // renderTask gets priority 2, so BCM timing stays tight
   xTaskCreatePinnedToCore(physicsTask, "Physics", 4096, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(renderTask,  "Render",  4096, NULL, 2, NULL, 0);
 }
 
 void loop() {
-  vTaskDelete(NULL);  // main loop unused — FreeRTOS takes over
+  vTaskDelete(NULL);  // main loop unused - FreeRTOS takes over
 }
