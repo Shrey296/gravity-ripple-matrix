@@ -8,7 +8,8 @@ A physics simulation of ripple waves on an 8×8 LED matrix, controlled by an acc
 ![Demo Image](demo_pic.jpeg)
 
 ## Demo Video:
-[![Watch Demo](demo_pic.jpeg)](demo_vid.mp4)
+
+[![Watch Demo](demo_pic.jpeg)](https://github.com/user-attachments/assets/90a6b5a2-8b4d-435c-8f08-d6630f21b596)
 
 ---
 
