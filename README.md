@@ -97,5 +97,3 @@ The behaviour is almost entirely controlled by four constants at the top of the 
 | `DAMPING` | `0.005` | How fast waves die - raise this for a quick-settling puddle feel |
 | `FORCE` | `0.10` | How hard the accelerometer kicks the surface - raise if gentle tilts do nothing |
 | `lc.control(INTENSITY, 10)` | `10` | Base brightness, 0-15 |
-
----
